@@ -1,3 +1,7 @@
+/*
+    To compile you can use this command on the terminal: g++ -Wall -Wextra snake.cpp -o demo_snake `sdl2-config --cflags --libs`
+*/
+
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <vector>
@@ -11,6 +15,7 @@
 #define INCREMENT_COLUMNS WIDTH/28
 #define INCREMENT_ROWS HEIGHT/18
 
+// Background lines function
 void background_paint(SDL_Surface *background){
     // Background columns lines 
     SDL_Rect back_columns;
@@ -40,6 +45,8 @@ void background_paint(SDL_Surface *background){
 struct snake_m{
 
 };
+
+//Green snake function 
 void snake(SDL_Surface *background, int dxm, int dym){
     SDL_Rect snake_movement;
     snake_movement.x = dxm;
@@ -47,6 +54,16 @@ void snake(SDL_Surface *background, int dxm, int dym){
     snake_movement.w = (INCREMENT_COLUMNS) - 3;
     snake_movement.h = (INCREMENT_ROWS) - 3;
     SDL_FillRect (background, &snake_movement,GREEN);
+}
+
+// Function to erase the green snake
+void hidden_snake(SDL_Surface *background, int hdxm, int hdym){
+    SDL_Rect hidden_snake_movement;
+    hidden_snake_movement.x = hdxm;
+    hidden_snake_movement.y = hdym;
+    hidden_snake_movement.w = (INCREMENT_COLUMNS) - 3;
+    hidden_snake_movement.h = (INCREMENT_ROWS) - 3;
+    SDL_FillRect (background, &hidden_snake_movement, WHITE);
 }
 int main (){
     std::cout << "Hello this is a snake game!\n";
@@ -65,6 +82,10 @@ int main (){
     int dymm = 0;
     int dxm = 0;
     int dxmm = 0;
+
+    int hdym = 0;
+    int hdxm = 0;
+
     while(!quit){
         while(SDL_PollEvent(&event)){
             if(event.type == SDL_QUIT){
@@ -73,35 +94,51 @@ int main (){
             SDL_GetKeyboardState(NULL);
             if(event.key.keysym.sym == SDLK_DOWN){
                 //SDL_Delay(10);
+                std::cout << "Hey down was pressed\n";
                 dymm ++;
                 dym = dymm * INCREMENT_ROWS;
-                std::cout << "Hey down was pressed\n";
+                hdym = dym - 33;
+                //std::cout << "dym:  " << dym <<std::endl;
+                //std::cout << "hdym:  " << hdym << std::endl; 
                 snake(SDL_GetWindowSurface(psurface), dxm + 3,dym + 3);
-                SDL_UpdateWindowSurface(psurface);    
+                SDL_UpdateWindowSurface(psurface);
+                hidden_snake(SDL_GetWindowSurface(psurface), dxm + 3, hdym +3);
+                SDL_UpdateWindowSurface(psurface);
+
             }
             if(event.key.keysym.sym == SDLK_UP){
                 //SDL_Delay(10);
                 dymm --;
                 dym = dymm * INCREMENT_ROWS;
+                std::cout << "dym: " << dym << std::endl;
+                hdym = dym + 33;
                 std::cout << "Hey up was pressed\n";
                 snake(SDL_GetWindowSurface(psurface), dxm + 3,dym + 3);
-                SDL_UpdateWindowSurface(psurface);    
+                SDL_UpdateWindowSurface(psurface); 
+                hidden_snake(SDL_GetWindowSurface(psurface), dxm + 3, hdym +3);
+                SDL_UpdateWindowSurface(psurface);                   
             }
             if(event.key.keysym.sym == SDLK_RIGHT){
                 //SDL_Delay(10);
                 dxmm ++;
                 dxm = dxmm * INCREMENT_COLUMNS;
+                hdxm = dxm - 33;
                 std::cout << "Hey right was pressed\n";
                 snake(SDL_GetWindowSurface(psurface), dxm + 3 ,dym + 3);
+                SDL_UpdateWindowSurface(psurface);
+                hidden_snake(SDL_GetWindowSurface(psurface), hdxm + 3, dym +3);
                 SDL_UpdateWindowSurface(psurface);    
             }
             if(event.key.keysym.sym == SDLK_LEFT){
                 //SDL_Delay(10);
                 dxmm --;
                 dxm = dxmm * INCREMENT_COLUMNS;
-                std::cout << "Hey right was pressed\n";
+                hdxm = dxm + 33;
+                std::cout << "Hey left was pressed\n";
                 snake(SDL_GetWindowSurface(psurface), dxm + 3 ,dym + 3);
-                SDL_UpdateWindowSurface(psurface);    
+                SDL_UpdateWindowSurface(psurface);
+                hidden_snake(SDL_GetWindowSurface(psurface), hdxm + 3, dym +3);
+                SDL_UpdateWindowSurface(psurface);                    
             }
             //snake(SDL_GetWindowSurface(psurface), 3,dym);
             SDL_UpdateWindowSurface(psurface);
